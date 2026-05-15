@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "name": "Check Implementation Plan",
+  "description": "Reminds the agent to check the implementation plan and follow the current tahap's requirements before writing code",
+  "version": "1",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Before writing code, verify: 1) Which tahap are we currently on? 2) Have all previous tahap tests been confirmed PASS? 3) Does the code follow the exact patterns from flutter-implementation.md? 4) Are you using the correct API endpoint paths (with /api/ prefix)? 5) Are error messages matching the exact backend messages listed in AGENTS.md?"
+  },
+  "workspaceFolderName": "flutter_sinicerita",
+  "shortName": "check-implementation-plan"
+}

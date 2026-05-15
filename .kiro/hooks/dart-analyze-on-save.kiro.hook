@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Flutter Analyze on Save",
+  "description": "Runs flutter analyze on the project after a Dart file is edited to catch compile errors and lint issues early",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.dart"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "flutter analyze --no-pub",
+    "timeout": 30
+  },
+  "workspaceFolderName": "flutter_sinicerita",
+  "shortName": "dart-analyze-on-save"
+}
