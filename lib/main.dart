@@ -19,10 +19,12 @@ import 'screens/auth/reset_password_screen.dart';
 import 'screens/auth/splash_screen.dart';
 import 'screens/auth/welcome_screen.dart';
 import 'screens/chat/chat_screen.dart';
+import 'screens/chat/session_summary_screen.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/persona/persona_detail_screen.dart';
 import 'screens/profile/change_password_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
+import 'screens/session/session_detail_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -142,6 +144,24 @@ GoRouter _createRouter(AuthProvider authProvider) {
         builder: (_, state) {
           final sessionId = state.pathParameters['sessionId']!;
           return ChatScreen(sessionId: sessionId);
+        },
+      ),
+      GoRoute(
+        path: '/session-detail/:sessionId',
+        builder: (_, state) {
+          final sessionId = state.pathParameters['sessionId']!;
+          return SessionDetailScreen(sessionId: sessionId);
+        },
+      ),
+      GoRoute(
+        path: '/session-summary',
+        builder: (_, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return SessionSummaryScreen(
+            scoreDelta: extra['scoreDelta'] as int,
+            newPoints: extra['newPoints'] as int,
+            summary: extra['summary'] as String,
+          );
         },
       ),
     ],

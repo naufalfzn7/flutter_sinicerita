@@ -32,6 +32,7 @@ class SessionListTile extends StatelessWidget {
     final now = DateTime.now();
     final relativeTime = formatRelativeTime(session.lastActivityAt, now);
     final preview = _getPreview();
+    final isCompleted = session.status == 'completed';
 
     return ListTile(
       onTap: onTap,
@@ -84,6 +85,13 @@ class SessionListTile extends StatelessWidget {
           ],
         ],
       ),
+      trailing: isCompleted
+          ? const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey,
+            )
+          : null,
     );
   }
 
@@ -94,10 +102,10 @@ class SessionListTile extends StatelessWidget {
   /// Truncate ke maksimal 50 karakter.
   String _getPreview() {
     final text = session.analysisSummary ?? '';
-    if (text.isEmpty) {
+    if (text.trim().isEmpty) {
       return session.status == 'active'
           ? 'Ketuk untuk melanjutkan...'
-          : 'Sesi telah selesai';
+          : 'Analisis tidak tersedia';
     }
     return text.length > 50 ? '${text.substring(0, 50)}...' : text;
   }

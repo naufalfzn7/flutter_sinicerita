@@ -301,7 +301,8 @@ class _CompletedSessionsTab extends StatelessWidget {
                   session: session,
                   personaName: personaName,
                   showScoreDelta: true,
-                  onTap: () => context.push('/chat/${session.id}'),
+                  onTap: () =>
+                      context.push('/session-detail/${session.id}'),
                 );
               },
             ),

@@ -135,6 +135,24 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Update points di currentUser model secara sinkron.
+  ///
+  /// Dipanggil oleh SessionProvider setelah session completion berhasil.
+  /// Membuat UserModel baru dengan points yang diupdate (immutable pattern).
+  void updatePoints(int newPoints) {
+    if (_currentUser == null) return;
+    _currentUser = UserModel(
+      id: _currentUser!.id,
+      name: _currentUser!.name,
+      email: _currentUser!.email,
+      role: _currentUser!.role,
+      points: newPoints,
+      avatarUrl: _currentUser!.avatarUrl,
+      createdAt: _currentUser!.createdAt,
+    );
+    notifyListeners();
+  }
+
   /// Expose ApiClient untuk digunakan oleh screen yang butuh akses langsung
   /// (misalnya EditProfileScreen untuk multipart upload).
   ApiClient get apiClient => _apiClient;

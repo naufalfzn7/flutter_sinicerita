@@ -276,7 +276,7 @@ class _PersonaDetailScreenState extends State<PersonaDetailScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Text(
-                    'Mulai Chat',
+                    'Mulai Sesi',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
           ),

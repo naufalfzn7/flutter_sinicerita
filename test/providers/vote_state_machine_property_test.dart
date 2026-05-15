@@ -62,6 +62,7 @@ PersonaModel applyVoteStateMachine(PersonaModel persona, String action) {
     upvotes: newUpvotes,
     downvotes: newDownvotes,
     userRating: newRating,
+    clearUserRating: newRating == null,
   );
 }
 

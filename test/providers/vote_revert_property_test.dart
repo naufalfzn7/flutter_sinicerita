@@ -92,6 +92,7 @@ void main() {
           upvotes: newUpvotes,
           downvotes: newDownvotes,
           userRating: newRating,
+          clearUserRating: newRating == null,
         );
       }
 
@@ -118,6 +119,7 @@ void main() {
               upvotes: originalUpvotes,
               downvotes: originalDownvotes,
               userRating: originalRating,
+              clearUserRating: originalRating == null,
             );
 
             // 5. Verify reverted state matches original exactly
@@ -167,6 +169,7 @@ void main() {
               upvotes: originalPersona.upvotes,
               downvotes: originalPersona.downvotes,
               userRating: originalPersona.userRating,
+              clearUserRating: originalPersona.userRating == null,
             );
 
             // Non-vote fields must remain unchanged
@@ -213,6 +216,7 @@ void main() {
               upvotes: originalPersona.upvotes,
               downvotes: originalPersona.downvotes,
               userRating: originalPersona.userRating,
+              clearUserRating: originalPersona.userRating == null,
             );
 
             // Equatable equality: reverted == original
