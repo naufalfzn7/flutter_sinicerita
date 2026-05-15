@@ -6,6 +6,22 @@
 class Validators {
   Validators._();
 
+  /// Validasi field persona form (name, description, systemPrompt).
+  ///
+  /// Rules:
+  /// - null atau whitespace-only → 'Field ini wajib diisi'
+  /// - length > [maxLength] → 'Maksimal $maxLength karakter'
+  /// - otherwise → null (valid)
+  static String? validatePersonaField(String? value, int maxLength) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Field ini wajib diisi';
+    }
+    if (value.length > maxLength) {
+      return 'Maksimal $maxLength karakter';
+    }
+    return null;
+  }
+
   /// Validasi field email.
   /// Cek empty dan format regex.
   static String? validateEmail(String? value) {

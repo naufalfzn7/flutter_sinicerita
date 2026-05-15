@@ -40,4 +40,17 @@ abstract class ApiEndpoints {
   static String sessionDetail(String id) => '/api/sessions/$id';
   static String sessionMessages(String id) => '/api/sessions/$id/messages';
   static String sessionComplete(String id) => '/api/sessions/$id/complete';
+
+  // ─── Admin ────────────────────────────────────────────────────────────────
+
+  static const String adminPersonas = '/api/personas';
+
+  static String adminPersonaDetail(String id) => '/api/personas/$id';
+
+  static String adminPersonaDeactivate(String id) =>
+      '/api/personas/$id/deactivate';
+
+  static const String adminUsers = '/api/admin/users';
+
+  static String adminUserDetail(String id) => '/api/admin/users/$id';
 }

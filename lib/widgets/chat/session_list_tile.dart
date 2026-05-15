@@ -98,14 +98,14 @@ class SessionListTile extends StatelessWidget {
   /// Mendapatkan preview text untuk subtitle.
   ///
   /// Menggunakan analysisSummary jika tersedia (untuk completed sessions),
-  /// atau placeholder text untuk active sessions.
+  /// atau placeholder text.
   /// Truncate ke maksimal 50 karakter.
   String _getPreview() {
     final text = session.analysisSummary ?? '';
     if (text.trim().isEmpty) {
       return session.status == 'active'
           ? 'Ketuk untuk melanjutkan...'
-          : 'Analisis tidak tersedia';
+          : 'Ketuk untuk melihat detail';
     }
     return text.length > 50 ? '${text.substring(0, 50)}...' : text;
   }

@@ -43,33 +43,40 @@ class PersonaModel extends Equatable {
     return PersonaModel(
       id: json['id'] as String,
       name: json['name'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String? ?? '',
       systemPrompt: json['systemPrompt'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
-      isActive: json['isActive'] as bool,
-      upvotes: json['upvotes'] as int,
-      downvotes: json['downvotes'] as int,
+      isActive: (json['isActive'] as bool?) ?? true,
+      upvotes: (json['upvotes'] as int?) ?? 0,
+      downvotes: (json['downvotes'] as int?) ?? 0,
       userRating: json['userRating'] as String?,
     );
   }
 
-  /// Create a copy with updated vote counts (for optimistic update).
+  /// Create a copy with updated fields.
   ///
   /// Use [clearUserRating] = true to explicitly set userRating to null.
-  /// If [clearUserRating] is false (default), [userRating] param controls the value.
+  /// Use [clearAvatarUrl] = true to explicitly set avatarUrl to null.
+  /// If the clear flag is false (default), the corresponding param controls the value.
   PersonaModel copyWith({
+    String? name,
+    String? description,
+    String? systemPrompt,
+    String? avatarUrl,
+    bool? isActive,
     int? upvotes,
     int? downvotes,
     String? userRating,
     bool clearUserRating = false,
+    bool clearAvatarUrl = false,
   }) {
     return PersonaModel(
       id: id,
-      name: name,
-      description: description,
-      systemPrompt: systemPrompt,
-      avatarUrl: avatarUrl,
-      isActive: isActive,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      systemPrompt: systemPrompt ?? this.systemPrompt,
+      avatarUrl: clearAvatarUrl ? null : (avatarUrl ?? this.avatarUrl),
+      isActive: isActive ?? this.isActive,
       upvotes: upvotes ?? this.upvotes,
       downvotes: downvotes ?? this.downvotes,
       userRating: clearUserRating ? null : (userRating ?? this.userRating),

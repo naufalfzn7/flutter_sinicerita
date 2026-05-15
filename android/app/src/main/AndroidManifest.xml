@@ -3,7 +3,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:label="sinicerita"
+        android:label="SiniCerita"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

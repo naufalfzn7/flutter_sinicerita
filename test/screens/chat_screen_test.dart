@@ -46,7 +46,14 @@ class MockSessionProvider extends ChangeNotifier implements SessionProvider {
   String? get currentChatSessionId => 'test-session-id';
 
   @override
-  List<SessionModel> get activeSessions => [];
+  List<SessionModel> get activeSessions => [
+        SessionModel(
+          id: 'test-session-id',
+          personaId: 'persona-1',
+          status: 'active',
+          createdAt: DateTime(2024, 1, 15),
+        ),
+      ];
 
   @override
   List<SessionModel> get completedSessions => [];
