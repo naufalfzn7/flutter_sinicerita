@@ -5,7 +5,7 @@ import '../storage/secure_storage.dart';
 /// HTTP client wrapper menggunakan Dio untuk komunikasi ke backend.
 ///
 /// Konfigurasi:
-/// - Base URL: `http://16.79.51.70:3000` (Deployed backend)
+/// - Base URL: `http://ec2-16-79-51-70.ap-southeast-3.compute.amazonaws.com` (Deployed backend)
 /// - Headers: Content-Type & Accept = `application/json`
 /// - Connect timeout: 30 detik
 /// - Receive timeout: 30 detik
@@ -17,7 +17,7 @@ class ApiClient {
   ApiClient({required SecureStorage storage}) : _storage = storage {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'http://16.79.51.70:3000',
+        baseUrl: 'http://ec2-16-79-51-70.ap-southeast-3.compute.amazonaws.com',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -53,7 +53,7 @@ class ApiClient {
               // Gunakan Dio instance terpisah untuk refresh (hindari interceptor loop)
               final refreshDio = Dio(
                 BaseOptions(
-                  baseUrl: 'http://16.79.51.70:3000',
+                  baseUrl: 'http://ec2-16-79-51-70.ap-southeast-3.compute.amazonaws.com',
                   headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

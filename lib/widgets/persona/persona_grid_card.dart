@@ -33,7 +33,6 @@ class PersonaGridCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               // Avatar
               ClipOval(
@@ -44,11 +43,11 @@ class PersonaGridCard extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: persona.avatarUrl!,
                           fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(
+                          placeholder: (_, __) => Container(
                             color: Colors.grey[300],
                             child: const Icon(Icons.person, size: 28),
                           ),
-                          errorWidget: (_, _, _) => Container(
+                          errorWidget: (_, __, ___) => Container(
                             color: Colors.grey[300],
                             child: const Icon(Icons.person, size: 28),
                           ),
@@ -74,17 +73,20 @@ class PersonaGridCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
 
-              // Description (max 2 lines)
+              // Description (max 3 lines, takes remaining space)
               Expanded(
-                child: Text(
-                  persona.description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    persona.description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(height: 8),

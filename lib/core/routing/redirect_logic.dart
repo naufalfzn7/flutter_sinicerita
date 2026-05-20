@@ -19,8 +19,7 @@ import '../../providers/auth_provider.dart';
 /// Role-based guards (hanya jika authenticated):
 /// | Role    | Location       | Target Route |
 /// |---------|----------------|--------------|
-/// | admin   | /admin/*       | null (stay)  |
-/// | admin   | non-admin/auth | /admin       |
+/// | admin   | any            | null (stay)  | ← admin bisa akses semua
 /// | user    | /admin/*       | /main        |
 /// | user    | /main          | null (stay)  |
 /// | unknown | any            | treat as "user" |
@@ -71,12 +70,11 @@ String? computeRedirect({
     final effectiveRole = (role == 'admin') ? 'admin' : 'user';
 
     if (effectiveRole == 'admin') {
-      // Admin at /admin/* → stay
-      if (isOnAdmin) return null;
-      // Admin at non-admin, non-auth route → redirect to /admin
-      if (!isAuthRoute) return '/admin';
+      // Admin bisa akses SEMUA route (admin + user features)
+      // Tidak perlu redirect — admin punya akses penuh
+      return null;
     } else {
-      // User at /admin/* → redirect to /main
+      // User at /admin/* → redirect to /main (user tidak boleh akses admin)
       if (isOnAdmin) return '/main';
     }
   }

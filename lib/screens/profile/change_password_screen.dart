@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/api/api_endpoints.dart';
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/validators.dart';
 import '../../providers/auth_provider.dart';
 
 /// ChangePasswordScreen — Form untuk mengubah password user.
@@ -117,23 +118,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   String? _validateOldPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password lama tidak boleh kosong';
-    }
-    return null;
+    return Validators.validateOldPassword(value);
   }
 
   String? _validateNewPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password baru tidak boleh kosong';
-    }
-    if (value.length < 8) {
-      return 'Password baru minimal 8 karakter';
-    }
-    if (value.length > 128) {
-      return 'Password baru maksimal 128 karakter';
-    }
-    return null;
+    return Validators.validateNewPassword(value, _oldPasswordController.text);
   }
 
   String? _validateConfirmPassword(String? value) {

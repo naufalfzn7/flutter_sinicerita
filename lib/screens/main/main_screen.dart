@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
 import '../chat/chat_list_screen.dart';
 import '../home/home_screen.dart';
 import '../persona/persona_list_screen.dart';
@@ -9,6 +13,7 @@ import '../profile/profile_screen.dart';
 ///
 /// Menampung BottomNavigationBar dengan 4 tab (Beranda, Chat, Persona, Profil)
 /// dan IndexedStack untuk mempertahankan state setiap tab.
+/// Jika user adalah admin, tampilkan FAB untuk kembali ke Admin Panel.
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -36,6 +41,9 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final isAdmin = authProvider.currentUser?.role == 'admin';
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -46,6 +54,14 @@ class MainScreenState extends State<MainScreen> {
           ProfileScreen(),
         ],
       ),
+      // FAB untuk admin kembali ke Admin Panel
+      floatingActionButton: isAdmin
+          ? FloatingActionButton.extended(
+              onPressed: () => context.go('/admin'),
+              icon: const Icon(Icons.admin_panel_settings),
+              label: const Text('Admin Panel'),
+            )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => switchTab(index),

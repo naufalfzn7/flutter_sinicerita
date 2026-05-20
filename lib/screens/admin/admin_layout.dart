@@ -40,6 +40,9 @@ class AdminLayout extends StatelessWidget {
         context.go('/admin/personas');
       case 2:
         context.go('/admin/users');
+      case 3:
+        // Switch ke fitur user (main screen)
+        context.go('/main');
     }
   }
 
@@ -139,6 +142,11 @@ class AdminLayout extends StatelessWidget {
                 icon: const Icon(Icons.people_outlined),
                 selectedIcon: const Icon(Icons.people),
                 label: const Text('Daftar User'),
+              ),
+              NavigationRailDestination(
+                icon: const Icon(Icons.chat_outlined),
+                selectedIcon: const Icon(Icons.chat),
+                label: const Text('Fitur User'),
               ),
             ],
           ),

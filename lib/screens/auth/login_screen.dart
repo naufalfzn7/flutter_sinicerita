@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-                  validator: Validators.validatePassword,
+                  validator: Validators.validateLoginPassword,
                 ),
 
                 const SizedBox(height: 24),

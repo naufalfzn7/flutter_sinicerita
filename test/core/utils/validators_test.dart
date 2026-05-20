@@ -54,19 +54,50 @@ void main() {
     });
 
     test('returns error when less than 8 characters', () {
-      expect(Validators.validatePassword('1234567'), 'Password minimal 8 karakter');
+      expect(Validators.validatePassword('Abcde1'), 'Password minimal 8 karakter');
     });
 
-    test('returns error for 1 character', () {
-      expect(Validators.validatePassword('a'), 'Password minimal 8 karakter');
+    test('returns error when more than 100 characters', () {
+      final longPassword = 'Aa1${'x' * 99}';
+      expect(Validators.validatePassword(longPassword), 'Password maksimal 100 karakter');
     });
 
-    test('returns null for exactly 8 characters', () {
-      expect(Validators.validatePassword('12345678'), isNull);
+    test('returns error when no lowercase letter', () {
+      expect(Validators.validatePassword('ABCDEFG1'), 'Password harus mengandung huruf kecil');
     });
 
-    test('returns null for more than 8 characters', () {
-      expect(Validators.validatePassword('password123'), isNull);
+    test('returns error when no uppercase letter', () {
+      expect(Validators.validatePassword('abcdefg1'), 'Password harus mengandung huruf besar');
+    });
+
+    test('returns error when no digit', () {
+      expect(Validators.validatePassword('Abcdefgh'), 'Password harus mengandung angka');
+    });
+
+    test('returns null for valid password with all requirements', () {
+      expect(Validators.validatePassword('Abcdefg1'), isNull);
+    });
+
+    test('returns null for complex valid password', () {
+      expect(Validators.validatePassword('MyP4ssword'), isNull);
+    });
+  });
+
+  group('Validators.validateLoginPassword', () {
+    test('returns error when null', () {
+      expect(Validators.validateLoginPassword(null), 'Password tidak boleh kosong');
+    });
+
+    test('returns error when empty string', () {
+      expect(Validators.validateLoginPassword(''), 'Password tidak boleh kosong');
+    });
+
+    test('returns null for any non-empty string', () {
+      expect(Validators.validateLoginPassword('a'), isNull);
+    });
+
+    test('returns null for short password (no complexity check)', () {
+      expect(Validators.validateLoginPassword('123'), isNull);
     });
   });
 
@@ -83,6 +114,11 @@ void main() {
       expect(Validators.validateName('   '), 'Nama tidak boleh kosong');
     });
 
+    test('returns error when more than 100 characters', () {
+      final longName = 'A' * 101;
+      expect(Validators.validateName(longName), 'Nama maksimal 100 karakter');
+    });
+
     test('returns null for valid name', () {
       expect(Validators.validateName('John'), isNull);
     });
@@ -90,40 +126,111 @@ void main() {
     test('returns null for single character name', () {
       expect(Validators.validateName('A'), isNull);
     });
+
+    test('returns null for exactly 100 characters', () {
+      final name = 'A' * 100;
+      expect(Validators.validateName(name), isNull);
+    });
   });
 
   group('Validators.validateConfirmPassword', () {
     test('returns error when null', () {
       expect(
-        Validators.validateConfirmPassword(null, 'password123'),
+        Validators.validateConfirmPassword(null, 'Password1'),
         'Konfirmasi password tidak boleh kosong',
       );
     });
 
     test('returns error when empty string', () {
       expect(
-        Validators.validateConfirmPassword('', 'password123'),
+        Validators.validateConfirmPassword('', 'Password1'),
         'Konfirmasi password tidak boleh kosong',
       );
     });
 
     test('returns error when does not match password', () {
       expect(
-        Validators.validateConfirmPassword('different', 'password123'),
+        Validators.validateConfirmPassword('different', 'Password1'),
         'Password tidak cocok',
       );
     });
 
     test('returns null when matches password', () {
       expect(
-        Validators.validateConfirmPassword('password123', 'password123'),
+        Validators.validateConfirmPassword('Password1', 'Password1'),
         isNull,
       );
     });
+  });
 
-    test('returns null when both are same string', () {
+  group('Validators.validateOtp', () {
+    test('returns error when null', () {
+      expect(Validators.validateOtp(null), 'Kode OTP tidak boleh kosong');
+    });
+
+    test('returns error when empty string', () {
+      expect(Validators.validateOtp(''), 'Kode OTP tidak boleh kosong');
+    });
+
+    test('returns error when less than 6 digits', () {
+      expect(Validators.validateOtp('12345'), 'Kode OTP harus 6 digit');
+    });
+
+    test('returns error when more than 6 digits', () {
+      expect(Validators.validateOtp('1234567'), 'Kode OTP harus 6 digit');
+    });
+
+    test('returns null for exactly 6 digits', () {
+      expect(Validators.validateOtp('123456'), isNull);
+    });
+  });
+
+  group('Validators.validateOldPassword', () {
+    test('returns error when null', () {
+      expect(Validators.validateOldPassword(null), 'Password lama tidak boleh kosong');
+    });
+
+    test('returns error when empty string', () {
+      expect(Validators.validateOldPassword(''), 'Password lama tidak boleh kosong');
+    });
+
+    test('returns null for any non-empty string', () {
+      expect(Validators.validateOldPassword('anything'), isNull);
+    });
+  });
+
+  group('Validators.validateNewPassword', () {
+    test('returns error when null', () {
       expect(
-        Validators.validateConfirmPassword('abcdefgh', 'abcdefgh'),
+        Validators.validateNewPassword(null, 'OldPass1'),
+        'Password tidak boleh kosong',
+      );
+    });
+
+    test('returns error when empty', () {
+      expect(
+        Validators.validateNewPassword('', 'OldPass1'),
+        'Password tidak boleh kosong',
+      );
+    });
+
+    test('returns error when same as old password', () {
+      expect(
+        Validators.validateNewPassword('OldPass1', 'OldPass1'),
+        'Password baru tidak boleh sama dengan password lama',
+      );
+    });
+
+    test('returns error when missing complexity (no uppercase)', () {
+      expect(
+        Validators.validateNewPassword('newpass1', 'OldPass1'),
+        'Password harus mengandung huruf besar',
+      );
+    });
+
+    test('returns null for valid new password different from old', () {
+      expect(
+        Validators.validateNewPassword('NewPass1', 'OldPass1'),
         isNull,
       );
     });
