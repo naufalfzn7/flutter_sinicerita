@@ -9,6 +9,7 @@ import '../../core/utils/home_helpers.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/persona_provider.dart';
 import '../../providers/session_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 import '../main/main_screen.dart';
 
 /// Array tips kesehatan mental harian (Bahasa Indonesia).
@@ -75,10 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _hasError = true;
       final errorMsg = sessionError ?? personaError ?? 'Terjadi kesalahan';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMsg),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(errorMsg), backgroundColor: Colors.red),
       );
     }
 
@@ -105,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final personaCount = personaProvider.totalPersonas;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: RefreshIndicator(
         onRefresh: _fetchData,
         child: SafeArea(
@@ -114,32 +113,51 @@ class _HomeScreenState extends State<HomeScreen> {
               vertical: AppSpacing.md,
             ),
             children: [
-              // Greeting
-              Text(
-                greeting,
-                style: Theme.of(context).textTheme.headlineMedium,
+              StaggeredFadeSlide(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      greeting,
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Semoga harimu lebih tenang dari kemarin.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Score Card
-              _isLoadingData
-                  ? _buildScoreCardShimmer()
-                  : _buildScoreCard(points, scoreStatus),
+              StaggeredFadeSlide(
+                index: 1,
+                child: _isLoadingData
+                    ? _buildScoreCardShimmer()
+                    : _buildScoreCard(points, scoreStatus),
+              ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Summary Cards
-              _isLoadingData
-                  ? _buildSummaryCardsShimmer()
-                  : _buildSummaryCards(
-                      activeCount, completedCount, personaCount),
+              StaggeredFadeSlide(
+                index: 2,
+                child: _isLoadingData
+                    ? _buildSummaryCardsShimmer()
+                    : _buildSummaryCards(
+                        activeCount,
+                        completedCount,
+                        personaCount,
+                      ),
+              ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Quick Action — Mulai Cerita
-              _buildQuickActionButton(),
+              StaggeredFadeSlide(index: 3, child: _buildQuickActionButton()),
               const SizedBox(height: AppSpacing.lg),
 
-              // Daily Tip
-              _buildDailyTipCard(dailyTip),
+              StaggeredFadeSlide(index: 4, child: _buildDailyTipCard(dailyTip)),
+              const SizedBox(height: 96),
             ],
           ),
         ),
@@ -153,68 +171,95 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     final color = _getScoreColor(scoreStatus.colorCategory);
 
-    return Card(
-      child: Padding(
-        padding: AppSpacing.paddingCard,
-        child: Row(
-          children: [
-            // Circular progress indicator
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: CircularProgressIndicator(
-                      value: points / 100,
-                      strokeWidth: 8,
-                      backgroundColor: color.withValues(alpha: 0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 116,
+            height: 116,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: points.clamp(0, 100) / 100),
+              duration: const Duration(milliseconds: 900),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, _) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 116,
+                      height: 116,
+                      child: CircularProgressIndicator(
+                        value: value,
+                        strokeWidth: 12,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: color.withValues(alpha: 0.18),
+                        valueColor: AlwaysStoppedAnimation<Color>(color),
+                      ),
                     ),
-                  ),
-                  Text(
-                    '$points',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.bold,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$points',
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                color: color,
+                                fontWeight: FontWeight.w800,
+                              ),
                         ),
-                  ),
-                ],
-              ),
+                        Text(
+                          '/100',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: AppColors.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
-            const SizedBox(width: AppSpacing.md),
-            // Status text
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Skor Kesehatan Mental',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          ),
+          const SizedBox(width: AppSpacing.lg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Skor Kesehatan Mental',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),
+                      ),
+                    ),
+                    GradientIconBubble(
+                      icon: Icons.favorite,
+                      color: color,
+                      size: 38,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  scoreStatus.text,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w800,
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    scoreStatus.text,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: color,
-                        ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildScoreCardShimmer() {
-    return Card(
+    return GlassPanel(
       child: Padding(
         padding: AppSpacing.paddingCard,
         child: Shimmer.fromColors(
@@ -354,52 +399,59 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickActionButton() {
-    return SizedBox(
-      width: double.infinity,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: AppSpacing.borderRadiusLg,
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryContainer],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.22),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
       child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        ),
         onPressed: () {
           context.findAncestorStateOfType<MainScreenState>()?.switchTab(2);
         },
-        icon: const Icon(Icons.auto_stories),
+        icon: const Icon(Icons.menu_book_rounded),
         label: const Text('Mulai Cerita'),
       ),
     );
   }
 
   Widget _buildDailyTipCard(String tip) {
-    return Card(
-      child: Padding(
-        padding: AppSpacing.paddingCard,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.lightbulb_outline,
-              color: AppColors.tertiary,
-              size: 24,
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Tips Hari Ini',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                        ),
+    return GlassPanel(
+      padding: AppSpacing.paddingCard,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.lightbulb_outline, color: AppColors.tertiary, size: 24),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tips Hari Ini',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    tip,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 4),
+                Text(tip, style: Theme.of(context).textTheme.bodyLarge),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -434,31 +486,29 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              '$count',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.onSurfaceVariant,
-                  ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      child: Column(
+        children: [
+          GradientIconBubble(icon: icon, color: color, size: 44),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '$count',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: AppColors.onSurfaceVariant),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

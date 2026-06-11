@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../providers/admin_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 
 /// Halaman dashboard admin yang menampilkan ringkasan statistik.
 ///
@@ -39,10 +42,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _showErrorSnackBarIfNeeded(adminProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        centerTitle: false,
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: const Text('Dashboard'), centerTitle: false),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: ListView(
@@ -52,10 +53,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             if (adminProvider.isLoadingDashboard)
               _buildShimmerCard(colorScheme)
             else
-              _buildStatsCard(
-                colorScheme: colorScheme,
-                textTheme: textTheme,
-                totalPersonas: adminProvider.totalActivePersonas,
+              StaggeredFadeSlide(
+                child: _buildStatsCard(
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                  totalPersonas: adminProvider.totalActivePersonas,
+                ),
               ),
           ],
         ),
@@ -71,10 +74,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         final message = adminProvider.errorMessage;
         if (message != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
           );
           adminProvider.clearError();
         }
@@ -88,43 +88,40 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     required TextTheme textTheme,
     required int totalPersonas,
   }) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.smart_toy,
-                  color: colorScheme.primary,
-                  size: 28,
+    return GlassPanel(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const GradientIconBubble(
+                icon: Icons.smart_toy,
+                color: AppColors.lavender,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Total Persona',
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurface,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  'Total Persona',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '$totalPersonas',
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: totalPersonas.toDouble()),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) => Text(
+              '${value.round()}',
               style: textTheme.displaySmall?.copyWith(
                 color: colorScheme.primary,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -136,9 +133,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       highlightColor: colorScheme.surfaceContainerLow,
       child: Card(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(

@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../models/session_model.dart';
 import '../../providers/persona_provider.dart';
 import '../../providers/session_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 import '../../widgets/chat/session_list_tile.dart';
 import '../main/main_screen.dart';
 
@@ -75,10 +77,7 @@ class _ChatListScreenState extends State<ChatListScreen>
     final error = context.read<SessionProvider>().errorMessage;
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(error), backgroundColor: Colors.red),
       );
       context.read<SessionProvider>().clearError();
     }
@@ -93,6 +92,7 @@ class _ChatListScreenState extends State<ChatListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Chat'),
         bottom: TabBar(
@@ -137,13 +137,17 @@ class _ActiveSessionsTab extends StatelessWidget {
       child: sessions.isEmpty
           ? _buildActiveEmptyState(context)
           : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 96),
               itemCount: sessions.length,
               itemBuilder: (context, index) {
                 final session = sessions[index];
-                return _DismissibleSessionItem(
-                  session: session,
-                  personaProvider: personaProvider,
-                  onTap: () => context.push('/chat/${session.id}'),
+                return StaggeredFadeSlide(
+                  index: index,
+                  child: _DismissibleSessionItem(
+                    session: session,
+                    personaProvider: personaProvider,
+                    onTap: () => context.push('/chat/${session.id}'),
+                  ),
                 );
               },
             ),
@@ -154,11 +158,7 @@ class _ActiveSessionsTab extends StatelessWidget {
     return ListView(
       children: [
         const SizedBox(height: 80),
-        Icon(
-          Icons.chat_bubble_outline,
-          size: 64,
-          color: Colors.grey[400],
-        ),
+        Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey[400]),
         const SizedBox(height: 16),
         const Center(
           child: Text(
@@ -170,9 +170,7 @@ class _ActiveSessionsTab extends StatelessWidget {
         Center(
           child: ElevatedButton.icon(
             onPressed: () {
-              context
-                  .findAncestorStateOfType<MainScreenState>()
-                  ?.switchTab(2);
+              context.findAncestorStateOfType<MainScreenState>()?.switchTab(2);
             },
             icon: const Icon(Icons.add),
             label: const Text('Mulai Cerita'),
@@ -208,10 +206,7 @@ class _DismissibleSessionItem extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         color: Colors.red,
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
       confirmDismiss: (direction) => _showDeleteConfirmation(context),
       child: SessionListTile(
@@ -239,10 +234,7 @@ class _DismissibleSessionItem extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Hapus',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Hapus', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -292,17 +284,20 @@ class _CompletedSessionsTab extends StatelessWidget {
       child: sessions.isEmpty
           ? _buildCompletedEmptyState()
           : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 96),
               itemCount: sessions.length,
               itemBuilder: (context, index) {
                 final session = sessions[index];
                 final persona = personaProvider.getById(session.personaId);
                 final personaName = persona?.name ?? 'Persona';
-                return SessionListTile(
-                  session: session,
-                  personaName: personaName,
-                  showScoreDelta: true,
-                  onTap: () =>
-                      context.push('/session-detail/${session.id}'),
+                return StaggeredFadeSlide(
+                  index: index,
+                  child: SessionListTile(
+                    session: session,
+                    personaName: personaName,
+                    showScoreDelta: true,
+                    onTap: () => context.push('/session-detail/${session.id}'),
+                  ),
                 );
               },
             ),
@@ -313,11 +308,7 @@ class _CompletedSessionsTab extends StatelessWidget {
     return ListView(
       children: [
         const SizedBox(height: 80),
-        Icon(
-          Icons.check_circle_outline,
-          size: 64,
-          color: Colors.grey[400],
-        ),
+        Icon(Icons.check_circle_outline, size: 64, color: Colors.grey[400]),
         const SizedBox(height: 16),
         const Center(
           child: Text(
@@ -343,7 +334,10 @@ class _ShimmerSessionList extends StatelessWidget {
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 6,
-        itemBuilder: (_, _) => const _ShimmerSessionTile(),
+        itemBuilder: (_, _) => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: _ShimmerSessionTile(),
+        ),
       ),
     );
   }
@@ -354,52 +348,39 @@ class _ShimmerSessionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: const CircleAvatar(
-        backgroundColor: Colors.white,
-      ),
-      title: Row(
+    return GlassPanel(
+      child: Row(
         children: [
+          const CircleAvatar(backgroundColor: Colors.white),
+          const SizedBox(width: 12),
           Expanded(
-            child: Container(
-              height: 14,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
+            child: Column(
+              children: [
+                Container(
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 40),
+          const SizedBox(width: 12),
           Container(
-            width: 50,
-            height: 12,
+            width: 48,
+            height: 18,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ],
-      ),
-      subtitle: Row(
-        children: [
-          Expanded(
-            child: Container(
-              height: 12,
-              margin: const EdgeInsets.only(top: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            width: 40,
-            height: 16,
-            margin: const EdgeInsets.only(top: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ],

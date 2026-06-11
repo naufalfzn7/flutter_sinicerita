@@ -52,11 +52,12 @@ abstract final class AppTheme {
 
       // ─── AppBar ──────────────────────────────────────────────
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Colors.transparent,
         foregroundColor: AppColors.onSurface,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: AppTypography.h2,
+        scrolledUnderElevation: 0,
       ),
 
       // ─── Text Theme ──────────────────────────────────────────
@@ -80,10 +81,14 @@ abstract final class AppTheme {
           foregroundColor: AppColors.onPrimary,
           minimumSize: const Size(double.infinity, AppSpacing.minTouchTarget),
           shape: RoundedRectangleBorder(
-            borderRadius: AppSpacing.borderRadiusMd,
+            borderRadius: AppSpacing.borderRadiusLg,
           ),
           textStyle: AppTypography.h3,
           elevation: 0,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
         ),
       ),
 
@@ -139,9 +144,7 @@ abstract final class AppTheme {
         labelStyle: AppTypography.body.copyWith(
           color: AppColors.onSurfaceVariant,
         ),
-        hintStyle: AppTypography.body.copyWith(
-          color: AppColors.outline,
-        ),
+        hintStyle: AppTypography.body.copyWith(color: AppColors.outline),
         prefixIconColor: AppColors.onSurfaceVariant,
         suffixIconColor: AppColors.onSurfaceVariant,
       ),
@@ -159,11 +162,23 @@ abstract final class AppTheme {
 
       // ─── Bottom Navigation Bar ──────────────────────────────
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surfaceContainer,
+        backgroundColor: AppColors.surfaceContainerLow,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.onSurfaceVariant,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
+        selectedLabelStyle: AppTypography.caption,
+        unselectedLabelStyle: AppTypography.caption,
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        extendedTextStyle: AppTypography.h3.copyWith(
+          color: AppColors.onPrimary,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusXl),
+        elevation: 4,
       ),
 
       // ─── Chip ────────────────────────────────────────────────
@@ -183,9 +198,7 @@ abstract final class AppTheme {
         contentTextStyle: AppTypography.body.copyWith(
           color: AppColors.onSurface,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: AppSpacing.borderRadiusMd,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
         behavior: SnackBarBehavior.floating,
       ),
 
@@ -202,9 +215,7 @@ abstract final class AppTheme {
       // ─── Dialog ──────────────────────────────────────────────
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceContainerHigh,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppSpacing.borderRadiusXl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusXl),
         titleTextStyle: AppTypography.h2,
         contentTextStyle: AppTypography.body,
       ),
@@ -221,6 +232,8 @@ abstract final class AppTheme {
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.onSurfaceVariant,
         indicatorColor: AppColors.primary,
+        indicatorSize: TabBarIndicatorSize.label,
+        dividerColor: AppColors.outlineVariant,
         labelStyle: AppTypography.h3,
         unselectedLabelStyle: AppTypography.body,
       ),

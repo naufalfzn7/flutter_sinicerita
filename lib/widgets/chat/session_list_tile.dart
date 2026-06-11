@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/utils/home_helpers.dart';
 import '../../models/session_model.dart';
+import '../common/app_surfaces.dart';
 
 /// Reusable tile widget untuk menampilkan item sesi chat di list.
 ///
@@ -34,64 +37,75 @@ class SessionListTile extends StatelessWidget {
     final preview = _getPreview();
     final isCompleted = session.status == 'completed';
 
-    return ListTile(
-      onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: Text(
-          personaName.isNotEmpty ? personaName[0].toUpperCase() : 'P',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(
-              personaName,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: GlassPanel(
+        onTap: onTap,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          children: [
+            GradientIconBubble(
+              icon: isCompleted ? Icons.check_rounded : Icons.chat_rounded,
+              color: isCompleted ? AppColors.success : AppColors.primary,
+              size: 50,
             ),
-          ),
-          Text(
-            relativeTime,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
-          ),
-        ],
-      ),
-      subtitle: Row(
-        children: [
-          Expanded(
-            child: Text(
-              preview,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[400],
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          personaName,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      Text(
+                        relativeTime,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          preview,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: AppColors.onSurfaceVariant),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      _buildBadge(context),
+                      if (showScoreDelta && session.scoreDelta != null) ...[
+                        const SizedBox(width: 6),
+                        _buildScoreDelta(),
+                      ],
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          _buildBadge(context),
-          if (showScoreDelta && session.scoreDelta != null) ...[
-            const SizedBox(width: 6),
-            _buildScoreDelta(),
+            if (isCompleted) ...[
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: AppColors.onSurfaceVariant,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-      trailing: isCompleted
-          ? const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            )
-          : null,
     );
   }
 
@@ -117,8 +131,8 @@ class SessionListTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: isActive
-            ? Colors.green.withValues(alpha: 0.15)
-            : Colors.blue.withValues(alpha: 0.15),
+            ? AppColors.success.withValues(alpha: 0.14)
+            : AppColors.primary.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -126,7 +140,7 @@ class SessionListTile extends StatelessWidget {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: isActive ? Colors.green : Colors.blue,
+          color: isActive ? AppColors.success : AppColors.primary,
         ),
       ),
     );
@@ -141,11 +155,7 @@ class SessionListTile extends StatelessWidget {
 
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: color,
-      ),
+      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color),
     );
   }
 }

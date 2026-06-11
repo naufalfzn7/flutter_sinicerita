@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../models/persona_model.dart';
+import '../common/app_surfaces.dart';
 
 /// Reusable card widget untuk menampilkan persona dalam grid layout.
 ///
@@ -25,96 +28,115 @@ class PersonaGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return GlassPanel(
       onTap: onTap,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            children: [
-              // Avatar
-              ClipOval(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.95),
+                    AppColors.lavender.withValues(alpha: 0.75),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.18),
+                    blurRadius: 20,
+                  ),
+                ],
+              ),
+              child: ClipOval(
                 child: SizedBox(
-                  width: 56,
-                  height: 56,
+                  width: 70,
+                  height: 70,
                   child: persona.avatarUrl != null
                       ? CachedNetworkImage(
                           imageUrl: persona.avatarUrl!,
                           fit: BoxFit.cover,
-                          placeholder: (_, __) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.person, size: 28),
-                          ),
-                          errorWidget: (_, __, ___) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.person, size: 28),
-                          ),
+                          placeholder: (context, url) => _avatarPlaceholder(),
+                          errorWidget: (context, url, error) =>
+                              _avatarPlaceholder(),
                         )
-                      : Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.person, size: 28),
-                        ),
+                      : _avatarPlaceholder(),
                 ),
               ),
-              const SizedBox(height: 8),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
 
-              // Name
-              Text(
-                persona.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+          Text(
+            persona.name,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+
+          Expanded(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                persona.description,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.onSurfaceVariant,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
 
-              // Description (max 3 lines, takes remaining space)
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    persona.description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+          Row(
+            children: [
+              const Icon(
+                Icons.thumb_up_outlined,
+                size: 16,
+                color: AppColors.onSurfaceVariant,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${persona.upvotes}',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 8),
-
-              // Vote counts (no buttons)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.thumb_up_outlined,
-                      size: 14, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${persona.upvotes}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  const SizedBox(width: 12),
-                  Icon(Icons.thumb_down_outlined,
-                      size: 14, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${persona.downvotes}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.thumb_down_outlined,
+                size: 16,
+                color: AppColors.onSurfaceVariant,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${persona.downvotes}',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _avatarPlaceholder() {
+    return Container(
+      color: AppColors.surfaceContainerHighest,
+      child: const Icon(
+        Icons.person,
+        size: 32,
+        color: AppColors.onSurfaceVariant,
       ),
     );
   }

@@ -7,8 +7,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../models/user_model.dart';
 import '../../providers/admin_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 
 /// Halaman daftar user untuk admin — read-only.
 ///
@@ -79,10 +82,8 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
     _showErrorIfNeeded(adminProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daftar User'),
-        centerTitle: false,
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: const Text('Daftar User'), centerTitle: false),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/admin/users/create'),
         tooltip: 'Tambah User',
@@ -127,7 +128,10 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
           );
         }
 
-        return _buildUserItem(users[index]);
+        return StaggeredFadeSlide(
+          index: index % 8,
+          child: _buildUserItem(users[index]),
+        );
       },
     );
   }
@@ -135,18 +139,13 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
   Widget _buildUserItem(UserModel user) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colorScheme.outlineVariant),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: GlassPanel(
         onTap: () => context.push('/admin/users/${user.id}'),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.zero,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -164,9 +163,7 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
                         Expanded(
                           child: Text(
                             user.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -181,8 +178,8 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
                     Text(
                       user.email,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -199,11 +196,11 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
                         const SizedBox(width: 4),
                         Text(
                           'HP: ${user.points}/100',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                         const SizedBox(width: 16),
                         // Registration date
@@ -215,10 +212,8 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
                         const SizedBox(width: 4),
                         Text(
                           _formatDate(user.createdAt),
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -237,21 +232,17 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
     if (avatarUrl != null && avatarUrl.isNotEmpty) {
       return CircleAvatar(
         radius: 24,
-        backgroundColor: colorScheme.surfaceContainerHigh,
+        backgroundColor: AppColors.surfaceContainerHighest,
         child: ClipOval(
           child: CachedNetworkImage(
             imageUrl: avatarUrl,
             width: 48,
             height: 48,
             fit: BoxFit.cover,
-            placeholder: (context, url) => Icon(
-              Icons.person,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            errorWidget: (context, url, error) => Icon(
-              Icons.person,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            placeholder: (context, url) =>
+                Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+            errorWidget: (context, url, error) =>
+                Icon(Icons.person, color: colorScheme.onSurfaceVariant),
           ),
         ),
       );
@@ -259,11 +250,8 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
 
     return CircleAvatar(
       radius: 24,
-      backgroundColor: colorScheme.surfaceContainerHigh,
-      child: Icon(
-        Icons.person,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      backgroundColor: AppColors.surfaceContainerHighest,
+      child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
     );
   }
 
@@ -275,11 +263,11 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: isAdmin
-            ? Colors.purple.withValues(alpha: 0.1)
-            : Colors.blue.withValues(alpha: 0.1),
+            ? AppColors.lavender.withValues(alpha: 0.14)
+            : AppColors.primary.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isAdmin ? Colors.purple : Colors.blue,
+          color: isAdmin ? AppColors.lavender : AppColors.primary,
           width: 0.5,
         ),
       ),
@@ -288,7 +276,7 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: isAdmin ? Colors.purple[700] : Colors.blue[700],
+          color: isAdmin ? AppColors.lavender : AppColors.primary,
         ),
       ),
     );
@@ -296,9 +284,9 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
 
   /// Warna health points berdasarkan nilai.
   Color _getPointsColor(int points) {
-    if (points >= 70) return Colors.green;
-    if (points >= 40) return Colors.orange;
-    return Colors.red;
+    if (points >= 70) return AppColors.success;
+    if (points >= 40) return AppColors.tertiary;
+    return AppColors.coral;
   }
 
   /// Format tanggal registrasi ke "dd MMMM yyyy" dengan locale id_ID.
@@ -330,10 +318,7 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Avatar placeholder
-                const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.white,
-                ),
+                const CircleAvatar(radius: 24, backgroundColor: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -409,10 +394,7 @@ class _AdminUserListScreenState extends State<AdminUserListScreen> {
         final message = provider.errorMessage;
         if (message != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
           );
           provider.clearError();
         }

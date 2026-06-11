@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../models/persona_model.dart';
 import '../../providers/admin_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 import '../../widgets/admin/deactivate_persona_dialog.dart';
 import '../../widgets/admin/hard_delete_persona_dialog.dart';
 
@@ -69,10 +72,8 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
     _showErrorIfNeeded(adminProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kelola Persona'),
-        centerTitle: false,
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: const Text('Kelola Persona'), centerTitle: false),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: _buildBody(adminProvider),
@@ -117,7 +118,10 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
           );
         }
 
-        return _buildPersonaItem(personas[index]);
+        return StaggeredFadeSlide(
+          index: index % 8,
+          child: _buildPersonaItem(personas[index]),
+        );
       },
     );
   }
@@ -125,18 +129,13 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
   Widget _buildPersonaItem(PersonaModel persona) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: colorScheme.outlineVariant),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: GlassPanel(
         onTap: () => context.push('/admin/personas/${persona.id}/edit'),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.zero,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -154,9 +153,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
                         Expanded(
                           child: Text(
                             persona.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -171,8 +168,8 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
                     Text(
                       persona.description,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -188,10 +185,8 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
                         const SizedBox(width: 4),
                         Text(
                           '${persona.upvotes}',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
                         const SizedBox(width: 12),
                         Icon(
@@ -202,10 +197,8 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
                         const SizedBox(width: 4),
                         Text(
                           '${persona.downvotes}',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -226,10 +219,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
                   // Hard delete button — always visible
                   IconButton(
                     onPressed: () => _showHardDeleteDialog(persona),
-                    icon: Icon(
-                      Icons.delete_outline,
-                      color: colorScheme.error,
-                    ),
+                    icon: Icon(Icons.delete_outline, color: colorScheme.error),
                     tooltip: 'Hapus Permanen',
                   ),
                 ],
@@ -246,21 +236,17 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
     if (avatarUrl != null && avatarUrl.isNotEmpty) {
       return CircleAvatar(
         radius: 24,
-        backgroundColor: colorScheme.surfaceContainerHigh,
+        backgroundColor: AppColors.surfaceContainerHighest,
         child: ClipOval(
           child: CachedNetworkImage(
             imageUrl: avatarUrl,
             width: 48,
             height: 48,
             fit: BoxFit.cover,
-            placeholder: (context, url) => Icon(
-              Icons.smart_toy,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            errorWidget: (context, url, error) => Icon(
-              Icons.smart_toy,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            placeholder: (context, url) =>
+                Icon(Icons.smart_toy, color: colorScheme.onSurfaceVariant),
+            errorWidget: (context, url, error) =>
+                Icon(Icons.smart_toy, color: colorScheme.onSurfaceVariant),
           ),
         ),
       );
@@ -268,11 +254,8 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
 
     return CircleAvatar(
       radius: 24,
-      backgroundColor: colorScheme.surfaceContainerHigh,
-      child: Icon(
-        Icons.smart_toy,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      backgroundColor: AppColors.surfaceContainerHighest,
+      child: Icon(Icons.smart_toy, color: colorScheme.onSurfaceVariant),
     );
   }
 
@@ -282,11 +265,11 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: isActive
-            ? Colors.green.withValues(alpha: 0.1)
+            ? AppColors.success.withValues(alpha: 0.12)
             : Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isActive ? Colors.green : Colors.grey,
+          color: isActive ? AppColors.success : Colors.grey,
           width: 0.5,
         ),
       ),
@@ -295,7 +278,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: isActive ? Colors.green[700] : Colors.grey[600],
+          color: isActive ? AppColors.success : Colors.grey[400],
         ),
       ),
     );
@@ -326,10 +309,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
       );
     } else if (result is String) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(result), backgroundColor: Colors.red),
       );
     }
     // null = cancelled, no action needed
@@ -360,10 +340,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
       );
     } else if (result is String) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(result), backgroundColor: Colors.red),
       );
     }
     // null = cancelled, no action needed
@@ -392,10 +369,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Avatar placeholder
-                const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.white,
-                ),
+                const CircleAvatar(radius: 24, backgroundColor: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -481,10 +455,7 @@ class _AdminPersonaListScreenState extends State<AdminPersonaListScreen> {
         final message = provider.errorMessage;
         if (message != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
           );
           provider.clearError();
         }

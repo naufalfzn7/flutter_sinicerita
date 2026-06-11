@@ -4,7 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 
 /// Shell widget yang membungkus semua halaman admin dengan NavigationRail.
 ///
@@ -81,80 +83,82 @@ class AdminLayout extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: Row(
-        children: [
-          // NavigationRail di sisi kiri
-          NavigationRail(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (index) =>
-                _onDestinationSelected(context, index),
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: colorScheme.surfaceContainerLow,
-            indicatorColor: colorScheme.primaryContainer,
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Column(
-                children: [
-                  // Avatar admin
-                  _buildAvatar(avatarUrl, colorScheme),
-                  const SizedBox(height: 8),
-                  // Nama admin (truncated)
-                  SizedBox(
-                    width: 72,
-                    child: Text(
-                      truncateName(adminName),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: colorScheme.onSurface,
-                          ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+      backgroundColor: Colors.transparent,
+      body: AppBackground(
+        child: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (index) =>
+                  _onDestinationSelected(context, index),
+              labelType: NavigationRailLabelType.all,
+              backgroundColor: AppColors.surfaceContainerLow.withValues(
+                alpha: 0.86,
               ),
-            ),
-            trailing: Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: IconButton(
-                    onPressed: () => _showLogoutDialog(context),
-                    icon: const Icon(Icons.logout),
-                    tooltip: 'Keluar',
+              indicatorColor: AppColors.primary.withValues(alpha: 0.18),
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  children: [
+                    // Avatar admin
+                    _buildAvatar(avatarUrl, colorScheme),
+                    const SizedBox(height: 8),
+                    // Nama admin (truncated)
+                    SizedBox(
+                      width: 72,
+                      child: Text(
+                        truncateName(adminName),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              trailing: Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: IconButton(
+                      onPressed: () => _showLogoutDialog(context),
+                      icon: const Icon(Icons.logout),
+                      tooltip: 'Keluar',
+                    ),
                   ),
                 ),
               ),
+              destinations: [
+                NavigationRailDestination(
+                  icon: const Icon(Icons.dashboard_outlined),
+                  selectedIcon: const Icon(Icons.dashboard),
+                  label: const Text('Dashboard'),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.smart_toy_outlined),
+                  selectedIcon: const Icon(Icons.smart_toy),
+                  label: const Text('Kelola Persona'),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.people_outlined),
+                  selectedIcon: const Icon(Icons.people),
+                  label: const Text('Daftar User'),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.chat_outlined),
+                  selectedIcon: const Icon(Icons.chat),
+                  label: const Text('Fitur User'),
+                ),
+              ],
             ),
-            destinations: [
-              NavigationRailDestination(
-                icon: const Icon(Icons.dashboard_outlined),
-                selectedIcon: const Icon(Icons.dashboard),
-                label: const Text('Dashboard'),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.smart_toy_outlined),
-                selectedIcon: const Icon(Icons.smart_toy),
-                label: const Text('Kelola Persona'),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.people_outlined),
-                selectedIcon: const Icon(Icons.people),
-                label: const Text('Daftar User'),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.chat_outlined),
-                selectedIcon: const Icon(Icons.chat),
-                label: const Text('Fitur User'),
-              ),
-            ],
-          ),
-          // Divider vertikal
-          const VerticalDivider(thickness: 1, width: 1),
-          // Content area
-          Expanded(child: child),
-        ],
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(child: child),
+          ],
+        ),
       ),
     );
   }
@@ -172,14 +176,10 @@ class AdminLayout extends StatelessWidget {
             width: 40,
             height: 40,
             fit: BoxFit.cover,
-            placeholder: (_, _) => Icon(
-              Icons.person,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            errorWidget: (_, _, _) => Icon(
-              Icons.person,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            placeholder: (_, _) =>
+                Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+            errorWidget: (_, _, _) =>
+                Icon(Icons.person, color: colorScheme.onSurfaceVariant),
           ),
         ),
       );
@@ -188,10 +188,7 @@ class AdminLayout extends StatelessWidget {
     return CircleAvatar(
       radius: 20,
       backgroundColor: colorScheme.surfaceContainerHigh,
-      child: Icon(
-        Icons.person,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
     );
   }
 }

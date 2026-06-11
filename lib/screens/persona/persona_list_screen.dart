@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../models/persona_model.dart';
 import '../../providers/persona_provider.dart';
+import '../../widgets/common/app_surfaces.dart';
 import '../../widgets/persona/persona_grid_card.dart';
 
 /// PersonaScreen — Menampilkan daftar persona AI dalam grid 2 kolom.
@@ -78,9 +80,8 @@ class _PersonaListScreenState extends State<PersonaListScreen> {
     _showErrorIfNeeded(provider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Persona'),
-      ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: const Text('Persona')),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: _buildBody(provider),
@@ -117,14 +118,14 @@ class _PersonaListScreenState extends State<PersonaListScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.78,
+              childAspectRatio: 0.72,
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return _buildPersonaCard(personas[index]);
-              },
-              childCount: personas.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return StaggeredFadeSlide(
+                index: index % 8,
+                child: _buildPersonaCard(personas[index]),
+              );
+            }, childCount: personas.length),
           ),
         ),
         // Bottom loading indicator for subsequent pages
@@ -159,9 +160,7 @@ class _PersonaListScreenState extends State<PersonaListScreen> {
           childAspectRatio: 0.78,
         ),
         itemCount: 6,
-        itemBuilder: (_, _) => Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        itemBuilder: (_, _) => GlassPanel(
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
@@ -223,11 +222,18 @@ class _PersonaListScreenState extends State<PersonaListScreen> {
         const Center(
           child: Column(
             children: [
-              Icon(Icons.people_outline, size: 64, color: Colors.grey),
+              Icon(
+                Icons.people_outline,
+                size: 64,
+                color: AppColors.onSurfaceVariant,
+              ),
               SizedBox(height: 16),
               Text(
                 'Belum ada persona tersedia',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -242,10 +248,7 @@ class _PersonaListScreenState extends State<PersonaListScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(error), backgroundColor: Colors.red),
         );
         provider.clearError();
       });
